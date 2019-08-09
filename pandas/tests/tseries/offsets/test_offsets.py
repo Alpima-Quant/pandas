@@ -2257,15 +2257,18 @@ class TestBusinessHour(Base):
         start_date = Timestamp('2018-10-15-06')
         end_date = Timestamp('2019-01-01-12')
         twelve_hours = timedelta(hours=12)
+        to_end_of_day = timedelta(hours=11, minutes=59, seconds=59)
         month_end = MonthEnd()
         # we expect (regardless of start_date) the last date in date_range to be
         # offset.rollback(end)
-        expected_last_date = month_end.rollback(end_date).date()
+        expected_last_date = month_end.rollback(end_date)
+        expected_last_date += to_end_of_day
         # test over 31 days (12 hour periods)
         for i in range(31 * 2):
             start_date += twelve_hours
+            expected_index = date_range(start=start_date, end=expected_last_date, freq=month_end)
             dates = date_range(start=start_date, end=end_date, freq=month_end)
-            assert dates[-1].date() == expected_last_date
+            tm.assert_index_equal(dates, expected_index)
 
 
 class TestCustomBusinessHour(Base):
