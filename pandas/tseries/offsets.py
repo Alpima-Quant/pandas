@@ -1244,7 +1244,7 @@ class _CustomBusinessMonth(_CustomMixin, BusinessMixin, MonthOffset):
         """
         Define default roll function to be called in apply method.
         """
-        cbday = CustomBusinessDay(n=self.n, normalize=False, **self.kwds)
+        cbday = CustomBusinessDay(n=1, normalize=False, **self.kwds)
 
         if self._prefix.endswith("S"):
             # MonthBegin
