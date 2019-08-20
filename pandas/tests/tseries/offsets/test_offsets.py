@@ -2270,6 +2270,18 @@ class TestBusinessHour(Base):
             dates = date_range(start=start_date, end=end_date, freq=month_end)
             tm.assert_index_equal(dates, expected_index)
 
+    def test_reverse_date_range(self):
+        start_date = datetime(2019, 7, 1, 0, 1)
+        end_date = datetime(2019, 4, 30, 0, 2)
+        dates = date_range(start=start_date, end=end_date, freq=MonthEnd(-1), tz='Europe/Berlin')
+
+        exp_start_date = datetime(2019, 5, 1, 0, 1)
+        exp_end_date = start_date
+        expected_dates = date_range(start=exp_start_date, end=exp_end_date, freq=MonthEnd(1), tz='Europe/Berlin')
+
+        assert dates[0].date() == expected_dates[1].date()
+        assert dates[1].date() == expected_dates[0].date()
+
 
 class TestCustomBusinessHour(Base):
     _offset = CustomBusinessHour
