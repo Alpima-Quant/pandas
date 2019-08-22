@@ -392,16 +392,16 @@ class DateOffset(BaseOffset):
 
     def _roll(self, dt, direction=1):
         """
-        Roll provided date backwards or forwards dependent on direction 
+        Roll provided date backwards or forwards dependent on direction
         (only if not on offset)
 
         negative offsets 'rollforward' onto a previous date, positive offsets
         'rollforward' onto a future date
-        
+
         Parameters
         ----------
         direction : int, default 1.
-            Either 1 or -1. Going forward in time if positive, 
+            Either 1 or -1. Going forward in time if positive,
             going back backward in time if negative
 
         Returns
@@ -1244,7 +1244,7 @@ class _CustomBusinessMonth(_CustomMixin, BusinessMixin, MonthOffset):
         """
         Define default roll function to be called in apply method.
         """
-        cbday = CustomBusinessDay(n=self.n, normalize=False, **self.kwds)
+        cbday = CustomBusinessDay(n=1, normalize=False, **self.kwds)
 
         if self._prefix.endswith("S"):
             # MonthBegin

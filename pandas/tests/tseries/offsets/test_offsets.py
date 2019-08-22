@@ -2257,15 +2257,30 @@ class TestBusinessHour(Base):
         start_date = Timestamp('2018-10-15-06')
         end_date = Timestamp('2019-01-01-12')
         twelve_hours = timedelta(hours=12)
+        to_end_of_day = timedelta(hours=11, minutes=59, seconds=59)
         month_end = MonthEnd()
         # we expect (regardless of start_date) the last date in date_range to be
         # offset.rollback(end)
-        expected_last_date = month_end.rollback(end_date).date()
+        expected_last_date = month_end.rollback(end_date)
+        expected_last_date += to_end_of_day
         # test over 31 days (12 hour periods)
         for i in range(31 * 2):
             start_date += twelve_hours
+            expected_index = date_range(start=start_date, end=expected_last_date, freq=month_end)
             dates = date_range(start=start_date, end=end_date, freq=month_end)
-            assert dates[-1].date() == expected_last_date
+            tm.assert_index_equal(dates, expected_index)
+
+    def test_reverse_date_range(self):
+        start_date = datetime(2019, 7, 1, 0, 1)
+        end_date = datetime(2019, 4, 30, 0, 2)
+        dates = date_range(start=start_date, end=end_date, freq=MonthEnd(-1), tz='Europe/Berlin')
+
+        exp_start_date = datetime(2019, 5, 1, 0, 1)
+        exp_end_date = start_date
+        expected_dates = date_range(start=exp_start_date, end=exp_end_date, freq=MonthEnd(1), tz='Europe/Berlin')
+
+        assert dates[0].date() == expected_dates[1].date()
+        assert dates[1].date() == expected_dates[0].date()
 
 
 class TestCustomBusinessHour(Base):
